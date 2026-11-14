@@ -200,6 +200,8 @@ function updateAudioStatus(isMuted){
 
 function enableAudio(){
   if(!playerReady) return;
+  audioButton.disabled=true;
+  audioButton.hidden=true;
   if(state==="playing"){
     player.unMute();
     window.setTimeout(()=>{
@@ -210,7 +212,6 @@ function enableAudio(){
   if(state!=="awaiting-gesture") return;
   state="starting";
   mutedAutoplayRetry=false;
-  audioButton.disabled=true;
   setStatus("再生準備中","音声付きで再生します。");
   playbackAttemptTimer=window.setTimeout(showPlaybackFallback,7000);
   player.unMute();
@@ -220,6 +221,17 @@ function enableAudio(){
 function showPlaybackFallback(){
   if(state!=="starting") return;
   playbackAttemptTimer=null;
+  if(playerReady && player.getPlayerState()===YT.PlayerState.PLAYING && !player.isMuted()){
+    state="playing";
+    audioButton.disabled=false;
+    audioButton.hidden=true;
+    const startDetail=resumeCurrentPlayback?"停止位置から再生中":`${selectedStartPosition}秒から再生中`;
+    resumeCurrentPlayback=false;
+    playbackStatusDetail=`${startDetail}。${selectedDuration}秒後に自動停止します。`;
+    setStatus("再生中",playbackStatusDetail);
+    if(stopTimer===null) stopTimer=window.setTimeout(stopPlayback,selectedDuration*1000);
+    return;
+  }
   state="awaiting-gesture";
   countdownOverlay.hidden=true;
   startButton.disabled=true;
