@@ -175,7 +175,20 @@ function requestPlayback(){
   const startDetail=resumeCurrentPlayback?"停止位置から":`${selectedStartPosition}秒から`;
   setStatus("再生準備中",`${startDetail}${selectedDuration}秒間再生します。`);
   const delay=player.getPlayerState()===YT.PlayerState.BUFFERING?7000:2500;
-  playbackAttemptTimer=window.setTimeout(showPlaybackFallback,delay);
+  playbackAttemptTimer=window.setTimeout(retryMutedPlayback,delay);
+  player.playVideo();
+}
+
+function retryMutedPlayback(){
+  if(state!=="starting") return;
+  if(mutedAutoplayRetry){
+    showPlaybackFallback();
+    return;
+  }
+  mutedAutoplayRetry=true;
+  if(playbackAttemptTimer!==null) window.clearTimeout(playbackAttemptTimer);
+  playbackAttemptTimer=window.setTimeout(showPlaybackFallback,7000);
+  player.mute();
   player.playVideo();
 }
 
@@ -187,7 +200,16 @@ function updateAudioStatus(isMuted){
 
 function enableAudio(){
   if(!playerReady) return;
+  if(state==="playing"){
+    player.unMute();
+    window.setTimeout(()=>{
+      if(state==="playing") updateAudioStatus(player.isMuted());
+    },500);
+    return;
+  }
+  if(state!=="awaiting-gesture") return;
   state="starting";
+  mutedAutoplayRetry=false;
   audioButton.disabled=true;
   setStatus("再生準備中","音声付きで再生します。");
   playbackAttemptTimer=window.setTimeout(showPlaybackFallback,7000);
@@ -200,6 +222,7 @@ function showPlaybackFallback(){
   playbackAttemptTimer=null;
   state="awaiting-gesture";
   countdownOverlay.hidden=true;
+  startButton.disabled=true;
   audioButton.disabled=false;
   audioButton.hidden=false;
   audioButton.textContent="音声付きで再生";
@@ -312,7 +335,7 @@ function onYouTubeIframeAPIReady(){
         onStateChange:event=>{
           if(event.data===YT.PlayerState.BUFFERING && state==="starting"){
             if(playbackAttemptTimer!==null) window.clearTimeout(playbackAttemptTimer);
-            playbackAttemptTimer=window.setTimeout(showPlaybackFallback,7000);
+            playbackAttemptTimer=window.setTimeout(mutedAutoplayRetry?showPlaybackFallback:retryMutedPlayback,7000);
           }
           if(event.data===YT.PlayerState.PLAYING && state==="starting"){
             if(playbackAttemptTimer!==null) window.clearTimeout(playbackAttemptTimer);
@@ -323,15 +346,14 @@ function onYouTubeIframeAPIReady(){
             state="playing";
             const startDetail=resumed?"停止位置から再生中":`${selectedStartPosition}秒から再生中`;
             playbackStatusDetail=`${startDetail}。${selectedDuration}秒後に自動停止します。`;
-            audioButton.textContent="音声をオン";
             audioButton.disabled=false;
-            audioButton.hidden=true;
-            setStatus("再生中",playbackStatusDetail);
+            audioButton.textContent="音声をオン";
+            updateAudioStatus(player.isMuted());
             stopTimer=window.setTimeout(stopPlayback,selectedDuration*1000);
           }
           if(event.data===YT.PlayerState.ENDED && state==="playing") stopPlayback(false);
         },
-        onAutoplayBlocked:showPlaybackFallback
+        onAutoplayBlocked:retryMutedPlayback
       }
     });
   });
