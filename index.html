@@ -199,20 +199,7 @@ function updateAudioStatus(isMuted){
 }
 
 function restoreAudioAfterPlayback(startTime){
-  audioButton.hidden=false;
-  audioRestoreTimer=window.setTimeout(()=>{
-    audioRestoreTimer=null;
-    if(state!=="playing") return;
-    if(player.getCurrentTime()<=startTime){
-      updateAudioStatus(true);
-      return;
-    }
-    player.unMute();
-    audioRestoreTimer=window.setTimeout(()=>{
-      audioRestoreTimer=null;
-      if(state==="playing") updateAudioStatus(player.isMuted());
-    },500);
-  },1000);
+  updateAudioStatus(true);
 }
 
 function enableAudio(){
