@@ -175,7 +175,7 @@ function requestPlayback(){
   const startDetail=resumeCurrentPlayback?"停止位置から":`${selectedStartPosition}秒から`;
   setStatus("再生準備中",`${startDetail}${selectedDuration}秒間再生します。`);
   const delay=player.getPlayerState()===YT.PlayerState.BUFFERING?7000:2500;
-  playbackAttemptTimer=window.setTimeout(retryMutedPlayback,delay);
+  playbackAttemptTimer=window.setTimeout(showPlaybackFallback,delay);
   player.playVideo();
 }
 
@@ -312,7 +312,7 @@ function onYouTubeIframeAPIReady(){
         onStateChange:event=>{
           if(event.data===YT.PlayerState.BUFFERING && state==="starting"){
             if(playbackAttemptTimer!==null) window.clearTimeout(playbackAttemptTimer);
-            playbackAttemptTimer=window.setTimeout(retryMutedPlayback,7000);
+            playbackAttemptTimer=window.setTimeout(showPlaybackFallback,7000);
           }
           if(event.data===YT.PlayerState.PLAYING && state==="starting"){
             if(playbackAttemptTimer!==null) window.clearTimeout(playbackAttemptTimer);
