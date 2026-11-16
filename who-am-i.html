@@ -55,9 +55,11 @@ h1{max-width:680px;margin:0;font-size:58px;line-height:1.04;font-weight:950}
 .clues{display:grid;gap:10px;margin:0;padding:0;list-style:none}
 .clue{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;padding:12px 14px;border:1px solid var(--line);background:#fff;animation:clue-arrive 460ms cubic-bezier(.2,.8,.2,1) both}
 .clue-number{color:var(--red);font-size:13px;font-weight:950;font-variant-numeric:tabular-nums}
+.clue-question{margin:0 0 7px;color:var(--blue);font-size:13px;font-weight:900;line-height:1.4;overflow-wrap:anywhere;white-space:pre-wrap}
 .clue-text{margin:0;font-size:17px;font-weight:700;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
 .game-section:fullscreen .clue{grid-template-columns:52px 1fr;gap:18px;padding:20px 0 20px 22px;border:0;border-left:5px solid var(--yellow);background:transparent}
 .game-section:fullscreen .clue-number{color:var(--yellow);font-size:18px}
+.game-section:fullscreen .clue-question{margin-bottom:10px;color:var(--yellow);font-size:20px}
 .game-section:fullscreen .clue-text{color:var(--white);font-size:42px;line-height:1.3}
 .answer{margin-top:16px;padding:16px;background:var(--mint);border:1px solid var(--ink)}
 .answer-label{margin:0 0 5px;color:#365847;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px}
@@ -70,7 +72,7 @@ h1{max-width:680px;margin:0;font-size:58px;line-height:1.04;font-weight:950}
 .game-section:fullscreen .complete-state h2{font-size:38px}
 .privacy-note{margin:19px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
 @keyframes clue-arrive{from{opacity:0;transform:translateY(22px) scale(.98);filter:blur(5px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
-@media(max-width:620px){main{padding:20px 16px 42px}.hero{grid-template-columns:1fr 66px;gap:10px;padding:27px 0 23px}h1{font-size:40px}.stamp{width:60px;height:60px;border-width:2px;font-size:28px}.hero-note{font-size:14px}.question{padding:17px;box-shadow:4px 4px 0 var(--ink)}.prompt-title{font-size:27px}.clue{grid-template-columns:28px 1fr;gap:8px;padding:11px}.clue-text{font-size:16px}.answer-name{font-size:24px}.button{flex:1 1 190px}.game-section:fullscreen{padding:20px}.game-section:fullscreen .presentation-toolbar{margin-bottom:24px}.game-section:fullscreen .prompt-title{font-size:29px}.game-section:fullscreen .clue{grid-template-columns:34px 1fr;gap:10px;padding:14px 0 14px 14px}.game-section:fullscreen .clue-number{font-size:14px}.game-section:fullscreen .clue-text{font-size:28px}}
+@media(max-width:620px){main{padding:20px 16px 42px}.hero{grid-template-columns:1fr 66px;gap:10px;padding:27px 0 23px}h1{font-size:40px}.stamp{width:60px;height:60px;border-width:2px;font-size:28px}.hero-note{font-size:14px}.question{padding:17px;box-shadow:4px 4px 0 var(--ink)}.prompt-title{font-size:27px}.clue{grid-template-columns:28px 1fr;gap:8px;padding:11px}.clue-text{font-size:16px}.answer-name{font-size:24px}.button{flex:1 1 190px}.game-section:fullscreen{padding:20px}.game-section:fullscreen .presentation-toolbar{margin-bottom:24px}.game-section:fullscreen .prompt-title{font-size:29px}.game-section:fullscreen .clue{grid-template-columns:34px 1fr;gap:10px;padding:14px 0 14px 14px}.game-section:fullscreen .clue-number{font-size:14px}.game-section:fullscreen .clue-question{font-size:16px}.game-section:fullscreen .clue-text{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.clue{animation:none}}
 </style>
 </head>
@@ -97,7 +99,7 @@ h1{max-width:680px;margin:0;font-size:58px;line-height:1.04;font-weight:950}
       <a class="button" href="https://forms.new" target="_blank" rel="noopener noreferrer">Googleフォームを作る</a>
       <button id="restartButton" class="button" type="button" hidden>順番をシャッフル</button>
     </div>
-    <p class="import-meta">Googleフォームの回答をCSVで保存して読み込みます。列名は「名前」「ヒント」にしてください。</p>
+    <p class="import-meta">Googleフォームの回答CSVを読み込みます。「名前」以外の質問文は、回答と一緒にヒントとして表示されます。</p>
     <p id="importStatus" role="status" aria-live="polite"></p>
     <p class="privacy-note">CSVはこのブラウザー内で読み込みます。回答はサイトへ送信されません。</p>
   </section>
@@ -211,7 +213,7 @@ function parseEntries(text){
   if(clueIndexes.length===0) throw new Error("「ヒント」の列が見つかりません。");
   const result=rows.slice(1).map(values=>{
     const name=(values[answerIndex]||"").trim();
-    const clues=clueIndexes.flatMap(index=>(values[index]||"").split(/\r?\n/).map(value=>value.trim()).filter(Boolean));
+    const clues=clueIndexes.map(index=>({question:(rows[0][index]||"").trim(),answer:(values[index]||"").trim()})).filter(clue=>clue.answer);
     return {name,clues};
   }).filter(entry=>entry.name && entry.clues.length);
   if(result.length===0) throw new Error("名前とヒントの両方が入った回答がありません。");
@@ -244,10 +246,16 @@ function renderCurrentClue(entry){
   const number=document.createElement("span");
   number.className="clue-number";
   number.textContent=String(clueIndex+1).padStart(2,"0");
+  const content=document.createElement("div");
+  content.className="clue-body";
+  const prompt=document.createElement("p");
+  prompt.className="clue-question";
+  prompt.textContent=entry.clues[clueIndex].question;
   const text=document.createElement("p");
   text.className="clue-text";
-  text.textContent=entry.clues[clueIndex];
-  item.append(number,text);
+  text.textContent=entry.clues[clueIndex].answer;
+  content.append(prompt,text);
+  item.append(number,content);
   cluesList.replaceChildren(item);
   roundCount.textContent=`出題 ${String(round+1).padStart(2,"0")} / ${String(entries.length).padStart(2,"0")}　・　ヒント ${String(clueIndex+1).padStart(2,"0")} / ${String(entry.clues.length).padStart(2,"0")}`;
 }
