@@ -3,387 +3,67 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f5f2e9">
-<title>椅子取りゲーム、ゲームマスター要らず。byあきと</title>
+<meta name="theme-color" content="#f3edda">
+<title>クラスゲーム | あきと</title>
 <style>
-:root{color-scheme:light;--ink:#20352f;--muted:#66766d;--paper:#f5f2e9;--line:#cbd4c8;--green:#28634d;--coral:#d5684a;--white:#fffefa}
+:root{color-scheme:light;--ink:#17283d;--muted:#58687a;--paper:#f3edda;--white:#fffdf6;--line:#c8c2b2;--blue:#2859d6;--red:#e5533d;--yellow:#f3c94e;--mint:#b9d7c6}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 12% 8%,#e0ead8 0,transparent 34%),radial-gradient(ellipse at 90% 92%,#f0d7c7 0,transparent 33%),var(--paper);color:var(--ink);font-family:"Yu Gothic UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
-main{width:min(920px,100%);margin:0 auto;padding:32px 22px 56px}
-header{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;border-bottom:1px solid var(--line);padding:10px 0 22px}
-.eyebrow{margin:0 0 8px;color:var(--green);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-h1{margin:0;font-family:Georgia,"Yu Mincho",serif;font-size:clamp(30px,5vw,46px);font-weight:500;line-height:1.15}
-.mark{width:50px;height:50px;flex:none;border:1px solid var(--green);border-radius:50%;display:grid;place-items:center;color:var(--green);font-size:23px}
-.game-link{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;padding:13px 16px;border:1px solid var(--ink);border-left:5px solid var(--coral);background:#f3c94e;color:var(--ink);font-weight:800;text-decoration:none}
-.game-link span:last-child{font-size:20px}
-.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.8fr);gap:24px;padding-top:26px}
-.player-wrap{position:relative;aspect-ratio:16/9;background:#17231f;border:1px solid #263d33;overflow:hidden}
-.player-wrap:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border:0;background:#000}
-.player-wrap:fullscreen::backdrop{background:#000}
-#player,#player iframe{width:100%;height:100%;display:block}
-.countdown-overlay{position:absolute;inset:0;display:grid;place-items:center;background:#0008;color:#fff;font-size:72px;font-weight:800;font-variant-numeric:tabular-nums;pointer-events:none}
-.countdown-overlay[hidden]{display:none}
-.audio-button{position:absolute;right:16px;bottom:16px;z-index:2;background:var(--white);color:var(--ink)}
-.audio-button[hidden]{display:none}
-.controls{border-top:3px solid var(--green);padding-top:17px}
-label{display:block;margin:0 0 8px;font-size:13px;font-weight:700}
-input{width:100%;height:44px;border:1px solid #aebcb1;border-radius:3px;padding:0 12px;background:var(--white);color:var(--ink);font:inherit}
-input:focus-visible,button:focus-visible{outline:3px solid #d88a68;outline-offset:2px}
-.field{margin-bottom:20px}
-.buttons{display:grid;grid-template-columns:1fr auto;gap:9px;margin-top:24px}
-button{height:46px;border:1px solid var(--green);border-radius:3px;padding:0 16px;font:inherit;font-weight:700;cursor:pointer}
-.primary{background:var(--green);color:white}.secondary{background:transparent;color:var(--green)}
-button:disabled{opacity:.48;cursor:not-allowed}
-.status{min-height:105px;margin-top:24px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
-.status-label{margin:0 0 4px;color:var(--muted);font-size:12px;font-weight:700}
-#status{margin:0;font-family:Georgia,"Yu Mincho",serif;font-size:30px;font-variant-numeric:tabular-nums;line-height:1.2}
-#detail{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
-.error{color:#a63d2b}
-@media(max-width:680px){main{padding:22px 16px 38px}.layout{grid-template-columns:1fr;gap:26px}.controls{padding-top:15px}header{align-items:center}}
+body{margin:0;min-height:100vh;background-color:var(--paper);background-image:radial-gradient(#17283d1c .7px,transparent .7px);background-size:12px 12px;color:var(--ink);font-family:"Yu Gothic UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
+a{color:inherit}
+a:focus-visible{outline:3px solid var(--red);outline-offset:4px}
+main{width:min(1040px,100%);margin:0 auto;padding:32px 24px 64px}
+.topline{display:flex;justify-content:space-between;align-items:center;padding-bottom:15px;border-bottom:1px solid var(--ink)}
+.wordmark{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1px}
+.signature{font-size:12px;font-weight:800;color:var(--muted)}
+.hero{display:grid;grid-template-columns:1fr 132px;align-items:center;gap:26px;padding:42px 0 34px;border-bottom:1px solid var(--ink)}
+.eyebrow{margin:0 0 10px;color:var(--blue);font-size:12px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+h1{max-width:760px;margin:0;font-size:58px;line-height:1.04;font-weight:950}
+.hero-note{margin:16px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+.stamp{width:120px;height:120px;display:grid;place-items:center;border:3px solid var(--red);border-radius:50%;color:var(--red);font-size:50px;font-weight:950;transform:rotate(8deg)}
+.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding-top:26px}
+.game{min-height:260px;display:flex;flex-direction:column;align-items:flex-start;padding:21px 22px 19px;border:1px solid var(--ink);background:var(--white);text-decoration:none;box-shadow:5px 5px 0 var(--ink);transition:transform .16s ease,box-shadow .16s ease}
+.game:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.game-chair{border-top:7px solid var(--yellow)}
+.game-guess{border-top:7px solid var(--blue)}
+.game-number{color:var(--red);font-size:12px;font-weight:950;letter-spacing:1px}
+.game h2{margin:14px 0 9px;font-size:26px;line-height:1.25;font-weight:950}
+.game p{margin:0;color:var(--muted);font-size:14px;line-height:1.65}
+.game-open{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:auto;padding-top:20px;font-size:14px;font-weight:900}
+.game-open span:last-child{font-size:22px;color:var(--blue)}
+.footer{margin-top:27px;padding-top:14px;border-top:1px solid var(--ink);color:var(--muted);font-size:12px}
+@media(max-width:680px){main{padding:21px 16px 40px}.hero{grid-template-columns:1fr 66px;gap:10px;padding:30px 0 25px}h1{font-size:42px}.hero-note{font-size:14px}.stamp{width:60px;height:60px;border-width:2px;font-size:26px}.games{grid-template-columns:1fr;gap:14px;padding-top:20px}.game{min-height:220px;padding:18px}.game h2{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.game{transition:none}}
 </style>
 </head>
 <body>
 <main>
-  <header>
-    <div><p class="eyebrow">A small window for video</p><h1>椅子取りゲーム、<br>ゲームマスター要らず。<br>byあきと</h1></div>
-    <div class="mark" aria-hidden="true">▶</div>
-  </header>
-  <a class="game-link" href="./who-am-i.html"><span>クラスで「私は誰でしょう？」を遊ぶ</span><span aria-hidden="true">→</span></a>
-  <div class="layout">
-    <section aria-label="YouTube動画">
-      <div id="playerStage" class="player-wrap">
-        <div id="player"></div>
-        <div id="countdownOverlay" class="countdown-overlay" aria-live="assertive" hidden></div>
-        <button id="audioButton" class="audio-button" type="button" hidden>音声をオン</button>
-      </div>
-    </section>
-    <section class="controls" aria-label="再生設定">
-      <div class="field">
-        <label for="videoUrl">YouTube動画のURL</label>
-        <input id="videoUrl" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="url">
-      </div>
-      <div class="field">
-        <label for="startPosition">再生開始位置（秒）</label>
-        <input id="startPosition" type="number" min="0" step="1" value="0" inputmode="numeric">
-      </div>
-      <div class="buttons">
-        <button id="startButton" class="primary" type="button">5秒後に再生</button>
-        <button id="resetButton" class="secondary" type="button" disabled>リセット</button>
-      </div>
-      <div class="status" role="status" aria-live="polite">
-        <p class="status-label">再生タイマー</p>
-        <p id="status">待機中</p>
-        <p id="detail">動画URLを入力してください。</p>
-      </div>
-    </section>
+  <div class="topline">
+    <div class="wordmark">CLASSROOM / PLAY</div>
+    <div class="signature">by あきと</div>
   </div>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Pick a game</p>
+      <h1>クラスゲーム</h1>
+      <p class="hero-note">みんなで遊ぶゲームを選んでください。</p>
+    </div>
+    <div class="stamp" aria-hidden="true">遊</div>
+  </header>
+  <nav class="games" aria-label="ゲーム一覧">
+    <a class="game game-chair" href="./chair-game.html">
+      <span class="game-number">GAME 01</span>
+      <h2>イス取りゲーム、<br>ゲームマスター要らず。</h2>
+      <p>YouTubeの好きな位置から流して、ランダムなタイミングでストップ。</p>
+      <span class="game-open"><span>ゲームを開く</span><span aria-hidden="true">→</span></span>
+    </a>
+    <a class="game game-guess" href="./who-am-i.html">
+      <span class="game-number">GAME 02</span>
+      <h2>私は誰でしょう？</h2>
+      <p>クラスの回答CSVを読み込み、ヒントから誰かを当てよう。</p>
+      <span class="game-open"><span>ゲームを開く</span><span aria-hidden="true">→</span></span>
+    </a>
+  </nav>
+  <footer class="footer">クラスで遊ぶためのゲーム</footer>
 </main>
-<script>
-let player=null;
-let playerReady=false;
-let countdownTimer=null;
-let stopTimer=null;
-let playbackAttemptTimer=null;
-let remaining=5;
-let state="idle";
-let pendingVideoId="";
-let selectedDuration=0;
-let selectedStartPosition=0;
-let resumeOnNextPlay=false;
-let resumeCurrentPlayback=false;
-let mutedAutoplayRetry=false;
-let audioRestoreTimer=null;
-let playbackStatusDetail="";
-
-const videoUrl=document.querySelector("#videoUrl");
-const startPosition=document.querySelector("#startPosition");
-const playerStage=document.querySelector("#playerStage");
-const countdownOverlay=document.querySelector("#countdownOverlay");
-const audioButton=document.querySelector("#audioButton");
-const startButton=document.querySelector("#startButton");
-const resetButton=document.querySelector("#resetButton");
-const statusText=document.querySelector("#status");
-const detailText=document.querySelector("#detail");
-
-function parseVideoId(value){
-  try{
-    const url=new URL(value.trim());
-    const host=url.hostname.replace(/^www\./," ").trim().toLowerCase();
-    let id="";
-    if(host==="youtu.be") id=url.pathname.split("/").filter(Boolean)[0]||"";
-    else if(["youtube.com","m.youtube.com","music.youtube.com"].includes(host)){
-      if(url.pathname==="/watch") id=url.searchParams.get("v")||"";
-      else if(/^\/(embed|shorts|live)\//.test(url.pathname)) id=url.pathname.split("/")[2]||"";
-    }
-    return /^[\w-]{11}$/.test(id)?id:"";
-  }catch{return "";}
-}
-
-function setStatus(title,detail,isError=false){
-  statusText.textContent=title;
-  detailText.textContent=detail;
-  detailText.classList.toggle("error",isError);
-}
-
-function setBusy(busy){
-  startButton.disabled=busy;
-  videoUrl.disabled=busy;
-  startPosition.disabled=busy;
-  resetButton.disabled=!busy;
-}
-
-function enterFullscreen(){
-  if(document.fullscreenElement===playerStage || !playerStage.requestFullscreen) return;
-  playerStage.requestFullscreen().catch(()=>{});
-}
-
-function exitFullscreen(){
-  if(document.fullscreenElement===playerStage) document.exitFullscreen().catch(()=>{});
-}
-
-function startCountdown(){
-  state="countdown";
-  remaining=5;
-  countdownOverlay.textContent=String(remaining);
-  countdownOverlay.hidden=false;
-  startButton.textContent="5秒後に再生";
-  setBusy(true);
-  setStatus(String(remaining),"秒後に動画を再生します。");
-  countdownTimer=window.setInterval(()=>{
-    remaining-=1;
-    if(remaining>0){
-      countdownOverlay.textContent=String(remaining);
-      setStatus(String(remaining),"秒後に動画を再生します。");
-      return;
-    }
-    window.clearInterval(countdownTimer);
-    countdownTimer=null;
-    countdownOverlay.hidden=true;
-    playForSelectedDuration();
-  },1000);
-}
-
-function playForSelectedDuration(){
-  if(!playerReady){
-    setStatus("準備中", "YouTubeプレーヤーを読み込んでいます。");
-    return;
-  }
-  selectedDuration=Math.floor(Math.random()*11)+5;
-  requestPlayback();
-}
-
-function requestPlayback(){
-  state="starting";
-  mutedAutoplayRetry=false;
-  const startDetail=resumeCurrentPlayback?"停止位置から":`${selectedStartPosition}秒から`;
-  setStatus("再生準備中",`${startDetail}${selectedDuration}秒間再生します。`);
-  const delay=player.getPlayerState()===YT.PlayerState.BUFFERING?7000:2500;
-  playbackAttemptTimer=window.setTimeout(retryMutedPlayback,delay);
-  player.playVideo();
-}
-
-function retryMutedPlayback(){
-  if(state!=="starting") return;
-  if(mutedAutoplayRetry){
-    showPlaybackFallback();
-    return;
-  }
-  mutedAutoplayRetry=true;
-  if(playbackAttemptTimer!==null) window.clearTimeout(playbackAttemptTimer);
-  playbackAttemptTimer=window.setTimeout(showPlaybackFallback,7000);
-  player.mute();
-  player.playVideo();
-}
-
-function updateAudioStatus(isMuted){
-  audioButton.hidden=!isMuted;
-  const detail=isMuted?`${playbackStatusDetail} 自動再生中はミュートです。音声をオンにしてください。`:playbackStatusDetail;
-  setStatus("再生中",detail);
-}
-
-function enableAudio(){
-  if(!playerReady) return;
-  audioButton.disabled=true;
-  audioButton.hidden=true;
-  if(state==="playing"){
-    player.unMute();
-    window.setTimeout(()=>{
-      if(state==="playing") updateAudioStatus(player.isMuted());
-    },500);
-    return;
-  }
-  if(state!=="awaiting-gesture") return;
-  state="starting";
-  mutedAutoplayRetry=false;
-  setStatus("再生準備中","音声付きで再生します。");
-  playbackAttemptTimer=window.setTimeout(showPlaybackFallback,7000);
-  player.unMute();
-  player.playVideo();
-}
-
-function showPlaybackFallback(){
-  if(state!=="starting") return;
-  playbackAttemptTimer=null;
-  if(playerReady && player.getPlayerState()===YT.PlayerState.PLAYING && !player.isMuted()){
-    state="playing";
-    audioButton.disabled=false;
-    audioButton.hidden=true;
-    const startDetail=resumeCurrentPlayback?"停止位置から再生中":`${selectedStartPosition}秒から再生中`;
-    resumeCurrentPlayback=false;
-    playbackStatusDetail=`${startDetail}。${selectedDuration}秒後に自動停止します。`;
-    setStatus("再生中",playbackStatusDetail);
-    if(stopTimer===null) stopTimer=window.setTimeout(stopPlayback,selectedDuration*1000);
-    return;
-  }
-  state="awaiting-gesture";
-  countdownOverlay.hidden=true;
-  startButton.disabled=true;
-  audioButton.disabled=false;
-  audioButton.hidden=false;
-  audioButton.textContent="音声付きで再生";
-  setStatus("再生の準備ができました","音声付きで再生するには、全画面のボタンを押してください。");
-}
-
-function stopPlayback(allowResume=true){
-  const wasPlaying=state==="playing";
-  if(playerReady) player.pauseVideo();
-  clearTimers();
-  countdownOverlay.hidden=true;
-  audioButton.hidden=true;
-  exitFullscreen();
-  resumeOnNextPlay=allowResume && wasPlaying && playerReady;
-  resumeCurrentPlayback=false;
-  mutedAutoplayRetry=false;
-  state="idle";
-  setBusy(false);
-  startButton.textContent="5秒後に再生";
-  setStatus("停止しました",resumeOnNextPlay?"同じ動画は停止位置から再開します。":"もう一度再生するにはボタンを押してください。");
-}
-
-function clearTimers(){
-  if(countdownTimer!==null) window.clearInterval(countdownTimer);
-  if(stopTimer!==null) window.clearTimeout(stopTimer);
-  if(playbackAttemptTimer!==null) window.clearTimeout(playbackAttemptTimer);
-  if(audioRestoreTimer!==null) window.clearTimeout(audioRestoreTimer);
-  countdownTimer=null;
-  stopTimer=null;
-  playbackAttemptTimer=null;
-  audioRestoreTimer=null;
-}
-
-function reset(){
-  clearTimers();
-  if(playerReady) player.stopVideo();
-  state="idle";
-  countdownOverlay.hidden=true;
-  audioButton.hidden=true;
-  exitFullscreen();
-  resumeOnNextPlay=false;
-  resumeCurrentPlayback=false;
-  mutedAutoplayRetry=false;
-  setBusy(false);
-  startButton.textContent="5秒後に再生";
-  setStatus("待機中","動画URLを入力してください。");
-}
-
-function onYouTubeIframeAPIReady(){
-  startButton.addEventListener("click",()=>{
-    if(state==="awaiting-gesture"){
-      enterFullscreen();
-      startButton.disabled=true;
-      startButton.textContent="5秒後に再生";
-      player.unMute();
-      requestPlayback();
-      return;
-    }
-    const videoId=parseVideoId(videoUrl.value);
-    if(!videoId){
-      setStatus("URLを確認してください","YouTube動画のURLを入力してください。",true);
-      videoUrl.focus();
-      return;
-    }
-    const position=Number(startPosition.value);
-    if(startPosition.value.trim()==="" || !Number.isInteger(position) || position<0){
-      setStatus("再生位置を確認してください","0以上の秒数を入力してください。",true);
-      startPosition.focus();
-      return;
-    }
-    selectedStartPosition=position;
-    enterFullscreen();
-    if(playerReady){
-      const resume=resumeOnNextPlay && pendingVideoId===videoId;
-      if(!resume) player.cueVideoById({videoId,startSeconds:selectedStartPosition});
-      player.unMute();
-      pendingVideoId=videoId;
-      resumeCurrentPlayback=resume;
-      resumeOnNextPlay=false;
-      startCountdown();
-      return;
-    }
-    pendingVideoId=videoId;
-    resumeCurrentPlayback=false;
-    state="loading";
-    setBusy(true);
-    setStatus("準備中","動画を読み込んでいます。");
-    player=new YT.Player("player",{
-      width:"100%",
-      height:"100%",
-      videoId:pendingVideoId,
-      playerVars:{playsinline:1,rel:0},
-      events:{
-        onReady:event=>{
-          playerReady=true;
-          event.target.cueVideoById({videoId:pendingVideoId,startSeconds:selectedStartPosition});
-          startCountdown();
-        },
-        onError:()=>{
-          clearTimers();
-          state="idle";
-          mutedAutoplayRetry=false;
-          countdownOverlay.hidden=true;
-          audioButton.hidden=true;
-          exitFullscreen();
-          setBusy(false);
-          startButton.textContent="5秒後に再生";
-          setStatus("動画を再生できません","URL、公開設定、または埋め込み許可を確認してください。",true);
-        },
-        onStateChange:event=>{
-          if(event.data===YT.PlayerState.BUFFERING && state==="starting"){
-            if(playbackAttemptTimer!==null) window.clearTimeout(playbackAttemptTimer);
-            playbackAttemptTimer=window.setTimeout(mutedAutoplayRetry?showPlaybackFallback:retryMutedPlayback,7000);
-          }
-          if(event.data===YT.PlayerState.PLAYING && state==="starting"){
-            if(playbackAttemptTimer!==null) window.clearTimeout(playbackAttemptTimer);
-            playbackAttemptTimer=null;
-            const resumed=resumeCurrentPlayback;
-            resumeCurrentPlayback=false;
-            mutedAutoplayRetry=false;
-            state="playing";
-            const startDetail=resumed?"停止位置から再生中":`${selectedStartPosition}秒から再生中`;
-            playbackStatusDetail=`${startDetail}。${selectedDuration}秒後に自動停止します。`;
-            audioButton.disabled=false;
-            audioButton.textContent="音声をオン";
-            updateAudioStatus(player.isMuted());
-            stopTimer=window.setTimeout(stopPlayback,selectedDuration*1000);
-          }
-          if(event.data===YT.PlayerState.ENDED && state==="playing") stopPlayback(false);
-        },
-        onAutoplayBlocked:retryMutedPlayback
-      }
-    });
-  });
-}
-
-resetButton.addEventListener("click",reset);
-audioButton.addEventListener("click",enableAudio);
-window.onYouTubeIframeAPIReady=onYouTubeIframeAPIReady;
-const apiScript=document.createElement("script");
-apiScript.src="https://www.youtube.com/iframe_api";
-document.head.appendChild(apiScript);
-if(location.protocol==="file:"){
-  startButton.disabled=true;
-  setStatus("HTTPで開いてください","YouTubeはHTMLファイルを直接開くと再生できません。open-youtube-timer.batから起動してください。",true);
-}
-</script>
 </body>
 </html>
