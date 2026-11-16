@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f1eddf">
+<title>私は誰でしょう？</title>
+<style>
+:root{color-scheme:light;--ink:#17283d;--muted:#58687a;--paper:#f1eddf;--white:#fffdf6;--line:#c8c4b8;--blue:#2859d6;--red:#e5533d;--yellow:#f3c94e;--mint:#b9d7c6}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background-color:var(--paper);background-image:radial-gradient(#17283d20 .7px,transparent .7px);background-size:12px 12px;color:var(--ink);font-family:"Yu Gothic UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
+button,a{font:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+main{width:min(980px,100%);margin:0 auto;padding:30px 24px 64px}
+.topline{display:flex;justify-content:space-between;align-items:center;padding-bottom:15px;border-bottom:1px solid var(--ink)}
+.wordmark{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1px}
+.back-link{color:var(--ink);font-size:13px;font-weight:700;text-decoration-thickness:1px;text-underline-offset:3px}
+.hero{display:grid;grid-template-columns:1fr 150px;align-items:center;gap:24px;padding:34px 0 28px;border-bottom:1px solid var(--ink)}
+.eyebrow{margin:0 0 9px;color:var(--blue);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1px}
+h1{max-width:680px;margin:0;font-size:58px;line-height:1.04;font-weight:950}
+.hero-note{margin:14px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+.stamp{width:128px;height:128px;display:grid;place-items:center;border:3px solid var(--red);border-radius:50%;color:var(--red);font-size:54px;font-weight:900;transform:rotate(9deg)}
+.section-head{display:flex;align-items:baseline;gap:12px;margin:0 0 14px}
+.section-head h2{margin:0;font-size:18px;font-weight:900}
+.section-index{color:var(--red);font-size:12px;font-weight:900}
+.import-section{padding:24px 0 26px;border-bottom:1px solid var(--ink)}
+.import-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.button{min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 17px;border:1px solid var(--ink);border-radius:4px;background:var(--white);color:var(--ink);font-weight:800;text-decoration:none;cursor:pointer}
+.button[hidden]{display:none}
+.button-primary{border-color:var(--blue);background:var(--blue);color:#fff}
+.button-red{border-color:var(--red);background:var(--red);color:#fff}
+.button:disabled{opacity:.42;cursor:not-allowed}
+#csvFile{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
+.import-meta{margin:13px 0 0;color:var(--muted);font-size:13px;line-height:1.6}
+#importStatus{min-height:22px;margin:10px 0 0;color:var(--blue);font-size:13px;font-weight:800}
+#importStatus.error{color:#b82e22}
+.game-section{padding-top:27px}
+.game-section[hidden],.empty-state[hidden],.question[hidden],.complete-state[hidden]{display:none}
+.empty-state{min-height:230px;display:grid;place-items:center;padding:24px;border:1px dashed #89877f;text-align:center}
+.empty-mark{width:62px;height:62px;margin:0 auto 13px;display:grid;place-items:center;border-radius:50%;background:var(--yellow);font-size:29px;font-weight:900}
+.empty-state h2{margin:0;font-size:20px}
+.empty-state p{max-width:440px;margin:8px auto 0;color:var(--muted);font-size:14px;line-height:1.6}
+.question-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.round-label{color:var(--blue);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1px}
+.round-count{font-variant-numeric:tabular-nums;font-weight:900}
+.question{padding:24px;background:var(--white);border:1px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+.prompt-title{margin:0 0 19px;font-family:Georgia,"Yu Mincho",serif;font-size:32px;font-weight:700}
+.clues{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.clue{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;padding:12px 14px;border:1px solid var(--line);background:#fff}
+.clue-number{color:var(--red);font-size:13px;font-weight:950;font-variant-numeric:tabular-nums}
+.clue-text{margin:0;font-size:17px;font-weight:700;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
+.answer{margin-top:16px;padding:16px;background:var(--mint);border:1px solid var(--ink)}
+.answer-label{margin:0 0 5px;color:#365847;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px}
+.answer-name{margin:0;font-size:28px;font-weight:950;overflow-wrap:anywhere}
+.game-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.complete-state{padding:30px 20px;text-align:center;background:var(--yellow);border:1px solid var(--ink)}
+.complete-state h2{margin:0;font-size:28px}
+.complete-state p{margin:8px 0 18px;color:#3b3523}
+.privacy-note{margin:19px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
+@media(max-width:620px){main{padding:20px 16px 42px}.hero{grid-template-columns:1fr 66px;gap:10px;padding:27px 0 23px}h1{font-size:40px}.stamp{width:60px;height:60px;border-width:2px;font-size:28px}.hero-note{font-size:14px}.question{padding:17px;box-shadow:4px 4px 0 var(--ink)}.prompt-title{font-size:27px}.clue{grid-template-columns:28px 1fr;gap:8px;padding:11px}.clue-text{font-size:16px}.answer-name{font-size:24px}.button{flex:1 1 190px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="topline">
+    <div class="wordmark">CLASSROOM / GUESS WHO</div>
+    <a class="back-link" href="./">トップへ戻る</a>
+  </div>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">A mystery from your class</p>
+      <h1>私は誰でしょう？</h1>
+      <p class="hero-note">ヒントを読んで、クラスメイトを当てよう。</p>
+    </div>
+    <div class="stamp" aria-hidden="true">?</div>
+  </header>
+
+  <section class="import-section" aria-labelledby="importTitle">
+    <div class="section-head"><span class="section-index">01</span><h2 id="importTitle">回答を読み込む</h2></div>
+    <div class="import-row">
+      <label class="button button-primary" for="csvFile">CSVを選ぶ</label>
+      <input id="csvFile" type="file" accept=".csv,text/csv">
+      <a class="button" href="https://forms.new" target="_blank" rel="noopener noreferrer">Googleフォームを作る</a>
+      <button id="restartButton" class="button" type="button" hidden>順番をシャッフル</button>
+    </div>
+    <p class="import-meta">Googleフォームの回答をCSVで保存して読み込みます。列名は「名前」「ヒント」にしてください。</p>
+    <p id="importStatus" role="status" aria-live="polite"></p>
+    <p class="privacy-note">CSVはこのブラウザー内で読み込みます。回答はサイトへ送信されません。</p>
+  </section>
+
+  <section id="gameSection" class="game-section" aria-live="polite" hidden>
+    <div id="emptyState" class="empty-state">
+      <div>
+        <div class="empty-mark" aria-hidden="true">?</div>
+        <h2>回答を読み込んでゲーム開始</h2>
+        <p>名前とヒントが入ったGoogleフォームの回答CSVを選ぶと、出題が始まります。</p>
+      </div>
+    </div>
+    <article id="question" class="question" hidden>
+      <div class="question-top">
+        <span class="round-label">Who is it?</span>
+        <span id="roundCount" class="round-count"></span>
+      </div>
+      <h2 class="prompt-title">この人は誰？</h2>
+      <ol id="clues" class="clues"></ol>
+      <div id="answer" class="answer" hidden>
+        <p class="answer-label">Answer</p>
+        <p id="answerName" class="answer-name"></p>
+      </div>
+      <div class="game-actions">
+        <button id="revealButton" class="button button-red" type="button">答えを見る</button>
+        <button id="nextButton" class="button button-primary" type="button">次の人</button>
+      </div>
+    </article>
+    <div id="completeState" class="complete-state" hidden>
+      <h2>全員出題しました！</h2>
+      <p>もう一度、順番をシャッフルして遊べます。</p>
+      <button id="playAgainButton" class="button button-primary" type="button">もう一度遊ぶ</button>
+    </div>
+  </section>
+</main>
+<script>
+const csvFile=document.querySelector("#csvFile");
+const importStatus=document.querySelector("#importStatus");
+const gameSection=document.querySelector("#gameSection");
+const emptyState=document.querySelector("#emptyState");
+const question=document.querySelector("#question");
+const completeState=document.querySelector("#completeState");
+const cluesList=document.querySelector("#clues");
+const answer=document.querySelector("#answer");
+const answerName=document.querySelector("#answerName");
+const roundCount=document.querySelector("#roundCount");
+const revealButton=document.querySelector("#revealButton");
+const nextButton=document.querySelector("#nextButton");
+const restartButton=document.querySelector("#restartButton");
+const playAgainButton=document.querySelector("#playAgainButton");
+let entries=[];
+let order=[];
+let round=0;
+
+function parseCsv(text){
+  const rows=[];
+  let row=[];
+  let cell="";
+  let quoted=false;
+  for(let index=0;index<text.length;index+=1){
+    const character=text[index];
+    if(quoted){
+      if(character==='"' && text[index+1]==='"'){
+        cell+='"';
+        index+=1;
+      }else if(character==='"'){
+        quoted=false;
+      }else{
+        cell+=character;
+      }
+    }else if(character==='"' && cell===""){
+      quoted=true;
+    }else if(character===","){
+      row.push(cell);
+      cell="";
+    }else if(character==="\n" || character==="\r"){
+      if(character==="\r" && text[index+1]==="\n") index+=1;
+      row.push(cell);
+      if(row.some(value=>value.trim()!=="")) rows.push(row);
+      row=[];
+      cell="";
+    }else{
+      cell+=character;
+    }
+  }
+  if(quoted) throw new Error("CSVの引用符が閉じられていません。");
+  row.push(cell);
+  if(row.some(value=>value.trim()!=="")) rows.push(row);
+  return rows;
+}
+
+function normalizeHeader(value){
+  return value.trim().toLowerCase().replace(/[\s\u3000()（）【】]/g,"");
+}
+
+function parseEntries(text){
+  const rows=parseCsv(text.replace(/^\uFEFF/,""));
+  if(rows.length<2) throw new Error("回答が見つかりません。CSVの見出しと回答行を確認してください。");
+  const headers=rows[0].map(normalizeHeader);
+  const answerIndex=headers.findIndex(header=>/^(名前|なまえ|氏名|答え|answer|name)/i.test(header));
+  if(answerIndex<0) throw new Error("「名前」の列が見つかりません。Googleフォームの質問名を「名前」にしてください。");
+  let clueIndexes=headers.map((header,index)=>/ヒント|特徴|clue/i.test(header)?index:-1).filter(index=>index>=0);
+  if(clueIndexes.length===0){
+    clueIndexes=headers.map((header,index)=>index!==answerIndex && !/タイムスタンプ|timestamp|メール|email|アドレス/i.test(header)?index:-1).filter(index=>index>=0);
+  }
+  if(clueIndexes.length===0) throw new Error("「ヒント」の列が見つかりません。");
+  const result=rows.slice(1).map(values=>{
+    const name=(values[answerIndex]||"").trim();
+    const clues=clueIndexes.flatMap(index=>(values[index]||"").split(/\r?\n/).map(value=>value.trim()).filter(Boolean));
+    return {name,clues};
+  }).filter(entry=>entry.name && entry.clues.length);
+  if(result.length===0) throw new Error("名前とヒントの両方が入った回答がありません。");
+  return result;
+}
+
+function shuffledIndexes(length){
+  const indexes=Array.from({length},(_,index)=>index);
+  for(let index=indexes.length-1;index>0;index-=1){
+    const swap=Math.floor(Math.random()*(index+1));
+    [indexes[index],indexes[swap]]=[indexes[swap],indexes[index]];
+  }
+  return indexes;
+}
+
+function startRound(){
+  order=shuffledIndexes(entries.length);
+  round=0;
+  gameSection.hidden=false;
+  emptyState.hidden=true;
+  completeState.hidden=true;
+  question.hidden=false;
+  restartButton.hidden=false;
+  showRound();
+}
+
+function showRound(){
+  const entry=entries[order[round]];
+  roundCount.textContent=`${String(round+1).padStart(2,"0")} / ${String(entries.length).padStart(2,"0")}`;
+  cluesList.replaceChildren();
+  entry.clues.forEach((clue,index)=>{
+    const item=document.createElement("li");
+    item.className="clue";
+    const number=document.createElement("span");
+    number.className="clue-number";
+    number.textContent=String(index+1).padStart(2,"0");
+    const text=document.createElement("p");
+    text.className="clue-text";
+    text.textContent=clue;
+    item.append(number,text);
+    cluesList.append(item);
+  });
+  answerName.textContent=entry.name;
+  answer.hidden=true;
+  revealButton.hidden=false;
+  revealButton.disabled=false;
+  nextButton.disabled=false;
+}
+
+function nextRound(){
+  round+=1;
+  if(round>=entries.length){
+    question.hidden=true;
+    completeState.hidden=false;
+    return;
+  }
+  showRound();
+}
+
+csvFile.addEventListener("change",async()=>{
+  const file=csvFile.files?.[0];
+  if(!file) return;
+  try{
+    const imported=parseEntries(await file.text());
+    entries=imported;
+    importStatus.classList.remove("error");
+    importStatus.textContent=`${entries.length}件の回答を読み込みました。`;
+    startRound();
+  }catch(error){
+    importStatus.classList.add("error");
+    importStatus.textContent=error instanceof Error?error.message:"CSVを読み込めませんでした。";
+  }finally{
+    csvFile.value="";
+  }
+});
+
+revealButton.addEventListener("click",()=>{
+  answer.hidden=false;
+  revealButton.disabled=true;
+});
+nextButton.addEventListener("click",nextRound);
+restartButton.addEventListener("click",startRound);
+playAgainButton.addEventListener("click",startRound);
+</script>
+</body>
+</html>

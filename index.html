@@ -14,6 +14,8 @@ header{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;
 .eyebrow{margin:0 0 8px;color:var(--green);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
 h1{margin:0;font-family:Georgia,"Yu Mincho",serif;font-size:clamp(30px,5vw,46px);font-weight:500;line-height:1.15}
 .mark{width:50px;height:50px;flex:none;border:1px solid var(--green);border-radius:50%;display:grid;place-items:center;color:var(--green);font-size:23px}
+.game-link{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;padding:13px 16px;border:1px solid var(--ink);border-left:5px solid var(--coral);background:#f3c94e;color:var(--ink);font-weight:800;text-decoration:none}
+.game-link span:last-child{font-size:20px}
 .layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.8fr);gap:24px;padding-top:26px}
 .player-wrap{position:relative;aspect-ratio:16/9;background:#17231f;border:1px solid #263d33;overflow:hidden}
 .player-wrap:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border:0;background:#000}
@@ -46,6 +48,7 @@ button:disabled{opacity:.48;cursor:not-allowed}
     <div><p class="eyebrow">A small window for video</p><h1>椅子取りゲーム、<br>ゲームマスター要らず。<br>byあきと</h1></div>
     <div class="mark" aria-hidden="true">▶</div>
   </header>
+  <a class="game-link" href="./who-am-i.html"><span>クラスで「私は誰でしょう？」を遊ぶ</span><span aria-hidden="true">→</span></a>
   <div class="layout">
     <section aria-label="YouTube動画">
       <div id="playerStage" class="player-wrap">
